@@ -3,6 +3,7 @@ package org.literacyapp.handwriting_numbers.view;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PointF;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -102,13 +103,14 @@ public class DrawViewOnTouchListener implements View.OnTouchListener {
         inferenceInterface.fetch(OUTPUT_NAME, outputs);
 
         if (outputs.length > 0) {
-            int number = -1;
+            int recognizedNumber = -1;
             for (int i=0; i < outputs.length; i++){
                 if (outputs[i] >= THRESHOLD){
-                    number = i;
+                    recognizedNumber = i;
                 }
             }
-            if (numberToWrite == number){
+            Log.i(getClass().getName(), "numberToWrite: " + numberToWrite + ", recognized number: " + recognizedNumber);
+            if (numberToWrite == recognizedNumber){
                 Intent intent = new Intent(context, FinalActivity.class);
                 intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
