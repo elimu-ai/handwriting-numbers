@@ -1,0 +1,46 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        applicationId "org.literacyapp.handwriting_numbers"
+        minSdkVersion 21
+        targetSdkVersion 23
+        versionCode 1000005
+        versionName "1.0.5-SNAPSHOT"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        encoding = "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+    compile 'org.literacyapp:literacyapp-model:1.1.33'
+    compile 'org.literacyapp:contentprovider:1.0.5'
+    compile 'org.tensorflow:tensorflow-android:1.2.0-rc0'
+    compile 'org.greenrobot:greendao:3.2.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:cardview-v7:23.4.0'
+    compile 'com.android.support:support-v4:23.4.0'
+}
