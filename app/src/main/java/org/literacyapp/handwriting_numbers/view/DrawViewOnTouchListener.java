@@ -95,7 +95,7 @@ public class DrawViewOnTouchListener implements View.OnTouchListener {
 
     private void processTouchUp() {
         mModel.endLine();
-        float pixels[] = mDrawView.getPixelData();
+        float pixels[] = mDrawView.getPixelData(INPUT_SIZE);
 
         inferenceInterface.feed(INPUT_NAME, pixels, 1, INPUT_SIZE, INPUT_SIZE, CHANNELS);
         inferenceInterface.run(new String[]{OUTPUT_NAME}, LOG_STATS);

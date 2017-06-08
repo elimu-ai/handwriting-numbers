@@ -18,8 +18,10 @@ package org.literacyapp.handwriting_numbers.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.CornerPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
@@ -34,7 +36,7 @@ import android.view.View;
 public class DrawView extends View {
     private Paint mPaint = new Paint();
     private DrawModel mModel;
-    // 28x28 pixel Bitmap
+
     private Bitmap mOffscreenBitmap;
     private Canvas mOffscreenCanvas;
 
@@ -57,8 +59,9 @@ public class DrawView extends View {
         mDrawnLineSize = 0;
         if (mOffscreenBitmap != null) {
             mPaint.setColor(Color.WHITE);
-            int width = mOffscreenBitmap.getWidth();
-            int height = mOffscreenBitmap.getHeight();
+            mPaint.setStyle(Paint.Style.FILL);
+            int width = mModel.getWidth();
+            int height = mModel.getHeight();
             mOffscreenCanvas.drawRect(new Rect(0, 0, width, height), mPaint);
         }
     }
@@ -141,7 +144,18 @@ public class DrawView extends View {
         }
         mOffscreenBitmap = Bitmap.createBitmap(mModel.getWidth(), mModel.getHeight(), Bitmap.Config.ARGB_8888);
         mOffscreenCanvas = new Canvas(mOffscreenBitmap);
+        initializePaint();
         reset();
+    }
+
+    // https://stackoverflow.com/a/7608516
+    private void initializePaint() {
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
+        mPaint.setPathEffect(new CornerPathEffect(50));
+        mPaint.setDither(true);
+        mPaint.setStrokeWidth(20);
+        mPaint.setAntiAlias(true);
     }
 
     private void releaseBitmap() {
@@ -154,19 +168,17 @@ public class DrawView extends View {
     }
 
     /**
-     * Get 28x28 pixel data for tensorflow input.
+     * Get pixel data for tensorflow input.
      */
-    public float[] getPixelData() {
+    public float[] getPixelData(int size) {
         if (mOffscreenBitmap == null) {
             return null;
         }
 
-        int width = mOffscreenBitmap.getWidth();
-        int height = mOffscreenBitmap.getHeight();
+        Bitmap mScaledBitmap = Bitmap.createScaledBitmap(mOffscreenBitmap, size, size, false);
 
-        // Get 28x28 pixel data from bitmap
-        int[] pixels = new int[width * height];
-        mOffscreenBitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+        int[] pixels = new int[size * size];
+        mScaledBitmap.getPixels(pixels, 0, size, 0, 0, size, size);
 
         float[] retPixels = new float[pixels.length];
         for (int i = 0; i < pixels.length; ++i) {
