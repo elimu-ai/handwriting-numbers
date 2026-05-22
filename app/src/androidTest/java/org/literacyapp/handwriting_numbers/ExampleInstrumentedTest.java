@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("org.literacyapp.imagepicker", appContext.getPackageName());
+        assertEquals("org.literacyapp.handwriting_numbers", appContext.getPackageName());
     }
 }
