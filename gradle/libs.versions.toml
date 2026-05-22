@@ -1,0 +1,7 @@
+[versions]
+elimuContentProvider = "1.4.62"
+elimuModel = "model-2.0.139"
+
+[libraries]
+elimu-content-provider = { group = "ai.elimu", name = "content-provider", version.ref = "elimuContentProvider" }
+elimu-model = { group = "ai.elimu", name = "model", version.ref = "elimuModel" }
