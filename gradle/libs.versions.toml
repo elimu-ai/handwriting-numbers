@@ -1,7 +1,27 @@
 [versions]
+agp = "8.7.3"
+appcompat = "1.7.0"
+cardview = "1.0.0"
 elimuContentProvider = "1.4.62"
 elimuModel = "model-2.0.139"
+espresso = "3.6.1"
+greendao = "3.2.0"
+junit = "4.13.2"
+junitExt = "1.2.1"
+legacySupportV4 = "1.0.0"
+tensorflow = "1.13.1"
 
 [libraries]
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitExt" }
 elimu-content-provider = { group = "ai.elimu", name = "content-provider", version.ref = "elimuContentProvider" }
 elimu-model = { group = "ai.elimu", name = "model", version.ref = "elimuModel" }
+greendao = { group = "org.greenrobot", name = "greendao", version.ref = "greendao" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+tensorflow-android = { group = "org.tensorflow", name = "tensorflow-android", version.ref = "tensorflow" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
