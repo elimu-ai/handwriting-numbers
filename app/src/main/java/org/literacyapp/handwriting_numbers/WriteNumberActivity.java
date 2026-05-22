@@ -2,28 +2,21 @@ package org.literacyapp.handwriting_numbers;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import org.literacyapp.contentprovider.ContentProvider;
-import org.literacyapp.contentprovider.dao.AudioDao;
-import org.literacyapp.contentprovider.dao.DaoSession;
-import org.literacyapp.contentprovider.model.content.Number;
 import org.literacyapp.handwriting_numbers.util.MediaPlayerHelper;
 import org.literacyapp.handwriting_numbers.view.DrawModel;
 import org.literacyapp.handwriting_numbers.view.DrawView;
 import org.literacyapp.handwriting_numbers.view.DrawViewOnTouchListener;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
-import java.util.List;
-
 public class WriteNumberActivity extends AppCompatActivity implements View.OnTouchListener {
 
-    private AudioDao audioDao;
-    private Number number;
+    private int numberValue;
 
     private static final int PIXEL_WIDTH = 280;
 
@@ -41,15 +34,11 @@ public class WriteNumberActivity extends AppCompatActivity implements View.OnTou
 
         setContentView(R.layout.activity_write);
 
-        DaoSession daoSession = ContentProvider.getDaoSession();
-        audioDao = daoSession.getAudioDao();
-
-        List<Number> unlockedNumbers = ContentProvider.getUnlockedNumbers();
-        number = unlockedNumbers.get((int)(Math.random() * unlockedNumbers.size()));
-        Log.i(getClass().getName(), "number: " + number);
+        // TODO: fetch number list via ContentProviderUtil once Number support is added
+        numberValue = 1 + (int)(Math.random() * 9);
+        Log.i(getClass().getName(), "numberValue: " + numberValue);
         TextView textView = (TextView) findViewById(R.id.textView);
-        textView.setText(number.getValue().toString());
-        // Set on listener to restart the drawing with a blank screen
+        textView.setText(String.valueOf(numberValue));
         textView.setOnTouchListener(this);
 
         initTensorFlowAndLoadModel();
@@ -58,7 +47,7 @@ public class WriteNumberActivity extends AppCompatActivity implements View.OnTou
 
         mDrawView = (DrawView) findViewById(R.id.view_draw);
         mDrawView.setModel(mModel);
-        DrawViewOnTouchListener listener = new DrawViewOnTouchListener(mDrawView, mModel, inferenceInterface, number.getValue(), getApplicationContext());
+        DrawViewOnTouchListener listener = new DrawViewOnTouchListener(mDrawView, mModel, inferenceInterface, numberValue, getApplicationContext());
         mDrawView.setOnTouchListener(listener);
     }
 
@@ -80,11 +69,11 @@ public class WriteNumberActivity extends AppCompatActivity implements View.OnTou
         mDrawView.onResume();
 
         MediaPlayer mediaPlayer = MediaPlayerHelper.playInstructionSound(getApplicationContext());
-        if (mediaPlayer != null){
+        if (mediaPlayer != null) {
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    MediaPlayerHelper.playNumberSound(getApplicationContext(), audioDao, number);
+                    MediaPlayerHelper.playNumberSound(getApplicationContext(), numberValue);
                 }
             });
         }

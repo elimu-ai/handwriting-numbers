@@ -3,26 +3,11 @@ package org.literacyapp.handwriting_numbers.util;
 import android.content.Context;
 import android.content.res.Resources;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.util.Log;
 
-import org.literacyapp.contentprovider.dao.AudioDao;
-import org.literacyapp.contentprovider.model.content.Letter;
-import org.literacyapp.contentprovider.model.content.Number;
-import org.literacyapp.contentprovider.model.content.multimedia.Audio;
-import org.literacyapp.contentprovider.util.MultimediaHelper;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Utility class which helps releasing the {@link MediaPlayer} instance after
- * finishing playing the audio.
- * <p />
- *
- * See https://developer.android.com/reference/android/media/MediaPlayer.html#create%28android.content.Context,%20int%29
- */
 public class MediaPlayerHelper {
     public static final long DEFAULT_PLAYER_DELAY = 1000;
 
@@ -60,7 +45,7 @@ public class MediaPlayerHelper {
         return mediaPlayer;
     }
 
-    public static MediaPlayer playInstructionSound(Context context){
+    public static MediaPlayer playInstructionSound(Context context) {
         Log.i(context.getClass().getName(), "playInstructionSound");
 
         List<String> instructionList = new ArrayList<>();
@@ -72,62 +57,15 @@ public class MediaPlayerHelper {
         return playRandomResource(context, instructionList);
     }
 
-    public static void playNumberSound(Context context, AudioDao audioDao, Number number){
+    public static void playNumberSound(Context context, int numberValue) {
         Log.i(context.getClass().getName(), "playNumberSound");
-
-        playSound(context, audioDao, number.getValue().toString(), Number.class);
+        playSoundFromAppResources(context, String.valueOf(numberValue));
     }
 
-    private static void playSound(Context context, AudioDao audioDao, String text, Class type) {
-        Log.i(context.getClass().getName(), "playSound");
-
-        // Look up corresponding Audio
-        final Audio audio;
-        if (type == Letter.class){
-            Log.d(context.getClass().getName(), "Looking up \"letter_sound_" + text + "\"");
-            audio = audioDao.queryBuilder()
-                    .where(AudioDao.Properties.Transcription.eq("letter_sound_" + text))
-                    .unique();
-        } else {
-            Log.d(context.getClass().getName(), "Looking up \"digit_" + text + "\"");
-            audio = audioDao.queryBuilder()
-                    .where(AudioDao.Properties.Transcription.eq("digit_" + text))
-                    .unique();
-        }
-        Log.i(context.getClass().getName(), "audio: " + audio);
-        if (audio != null) {
-            // Play audio
-            File audioFile = MultimediaHelper.getFile(audio);
-            if (audioFile.exists()){
-                Uri uri = Uri.parse(audioFile.getAbsolutePath());
-                MediaPlayer mediaPlayer = MediaPlayer.create(context, uri);
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        Log.i(getClass().getName(), "onCompletion");
-                        mediaPlayer.release();
-                    }
-                });
-                mediaPlayer.start();
-            } else {
-                // Audio not found. Fall-back to application resource.
-                playSoundFromAppResources(context, text, type);
-            }
-        } else {
-            // Audio not found. Fall-back to application resource.
-            playSoundFromAppResources(context, text, type);
-        }
-    }
-
-    private static void playSoundFromAppResources(Context context, String text, Class type){
+    private static void playSoundFromAppResources(Context context, String text) {
         Log.i(context.getClass().getName(), "playSoundFromAppResources");
 
-        String audioFileName;
-        if (type == Letter.class){
-            audioFileName = "letter_sound_" + text;
-        } else {
-            audioFileName = "digit_" + text;
-        }
+        String audioFileName = "digit_" + text;
         int resourceId = context.getResources().getIdentifier(audioFileName, "raw", context.getPackageName());
         try {
             if (resourceId != 0) {
@@ -138,7 +76,7 @@ public class MediaPlayerHelper {
         }
     }
 
-    public static MediaPlayer playLessonCompleted(Context context){
+    public static MediaPlayer playLessonCompleted(Context context) {
         Log.i(context.getClass().getName(), "playLessonCompleted");
 
         List<String> lessonCompletedList = new ArrayList<>();
@@ -152,7 +90,7 @@ public class MediaPlayerHelper {
         return playRandomResource(context, lessonCompletedList);
     }
 
-    public static MediaPlayer playLessonFailed(Context context){
+    public static MediaPlayer playLessonFailed(Context context) {
         Log.i(context.getClass().getName(), "playLessonFailed");
 
         List<String> lessonFailedList = new ArrayList<>();
@@ -161,8 +99,7 @@ public class MediaPlayerHelper {
         return playRandomResource(context, lessonFailedList);
     }
 
-
-    private static MediaPlayer playRandomResource(Context context, List<String> list){
+    private static MediaPlayer playRandomResource(Context context, List<String> list) {
         Resources resources = context.getResources();
         int resourceId = resources.getIdentifier(list.get((int)(Math.random() * list.size())), "raw", context.getPackageName());
         MediaPlayer mediaPlayer = null;
