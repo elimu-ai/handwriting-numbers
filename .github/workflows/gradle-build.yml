@@ -19,6 +19,6 @@ jobs:
         with:
           distribution: temurin
           java-version: ${{ matrix.java }}
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew assembleDebug
       - run: ./gradlew test
